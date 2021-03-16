@@ -11,8 +11,22 @@ const svg = d3.select('#chart-area').append("svg")
 // Add time variable for the transitions
 let time = 0
 
+// Append group element
 const g = svg.append("g")
 	.attr("transform", `translate(${MARGINS.LEFT}, ${MARGINS.TOP})`)
+
+// Tooltip
+const tip = d3.tip()
+	.attr("class", "d3-tip")
+	.html(d => {
+		let text = `<strong>Country:</strong> <span style="color: red"; text-transform: capitalize>${d.country}</span><br>`
+		text += `<strong>Continent:</strong> <span style="color: red; text-transform: capitalize">${d.continent}</span><br>`
+		text += `<strong>Life Expectancy:</strong> <span style="color: red">${d3.format(".2f")(d.life_exp)}</span><br>`
+		text += `<strong>GDP Per Capita:</strong> <span style="color: red">${d3.format("$,0f")(d.income)}</span><br>`
+		text += `<strong>Population:</strong> <span style="color: red">${d3.format(",.0f")(d.population)}</span><br>`
+		return text
+	})
+g.call(tip)
 
 // Create scales
 const x = d3.scaleLog()
@@ -28,7 +42,7 @@ const area = d3.scaleLinear()
 	.range([25 * Math.PI, 1500 * Math.PI])
 	.domain([2000, 1400000000])
 
-const contcolor = d3.scaleOrdinal(d3.schemePastel1)
+const contcolor = d3.scaleOrdinal(d3.schemeTableau10)
 
 // x axis label
 const xLabel = g.append("text")
@@ -36,6 +50,7 @@ const xLabel = g.append("text")
 	.attr("x", WIDTH / 2)
 	.attr("y", HEIGHT + 60)
 	.attr("font-size", "20px")
+	.attr("opacity", "0.7")
 	.attr("text-anchor", "middle")
 	.text("GDP Per Capita ($)")
 
@@ -46,6 +61,7 @@ const yLabel = g.append("text")
 	.attr("x", -240)
 	.attr("font-size", "20px")
 	.attr("text-anchor", "middle")
+	.attr("opacity", "0.7")
 	.attr("transform", "rotate(-90)")
 	.text("Life Expectancy (Years)")
 
@@ -64,13 +80,16 @@ const xAxisCall = d3.axisBottom(x)
 	.tickValues([400, 4000, 40000])
 	.tickFormat(d => d)
 g.append("g")
+	.attr("color", "#888")
 	.attr("class", "x axis")
 	.attr("transform", `translate(0, ${HEIGHT})`)
 	.call(xAxisCall)
 
 // Add y axis
 const yAxisCall = d3.axisLeft(y)
+.ticks(5)
 g.append("g")
+	.attr("color", "#888")
 	.attr("class", "y axis")
 	.call(yAxisCall)
 
@@ -135,6 +154,8 @@ function update(data) {
 	// Enter and merge
 	circles.enter().append("circle")
 		.attr("fill", d => contcolor(d.continent))
+		.on("mouseover", tip.show)
+		.on("mouseout", tip.hide)
 		.merge(circles)
 		.transition(t)
 		.attr("cy", d => y(d.life_exp))
@@ -144,6 +165,5 @@ function update(data) {
 
 	// update time label 
 	timeLabel.text(String(time + 1800))
-
 
 }

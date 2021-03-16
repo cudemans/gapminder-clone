@@ -1,14 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+* {
+	font-family: "Roboto";
+}
+
 #chart-area {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
 }
 
-#logo {
-	height:50px;
-}
-
 .navbar-brand {
 	height: 60px;
-	padding: 5px 0px;
+
+}
+.header {
+	text-align: left;
+	font-size: 50px;
+	padding: 15px;
+	color: rgb(99, 98, 98);
+	transform: translate(13%);
+	font-weight: 400;
 }
