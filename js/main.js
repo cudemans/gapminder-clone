@@ -1,23 +1,21 @@
-/*
-*    main.js
-*    Mastering Data Visualization with D3.js
-*    Project 2 - Gapminder Clone
-*/
-
-const MARGINS = { TOP: 10, BOTTOM:100, LEFT:100, RIGHT: 100}
+// Set up margins
+const MARGINS = { TOP: 10, BOTTOM: 100, LEFT: 100, RIGHT: 100 }
 const HEIGHT = 600 - MARGINS.TOP - MARGINS.BOTTOM
 const WIDTH = 1000 - MARGINS.LEFT - MARGINS.RIGHT
 
+// Set up SVG canvas
 const svg = d3.select('#chart-area').append("svg")
 	.attr("height", HEIGHT + MARGINS.TOP + MARGINS.BOTTOM)
 	.attr("width", WIDTH + MARGINS.RIGHT + MARGINS.LEFT)
 
+// Add time variable for the transitions
 let time = 0
 
 const g = svg.append("g")
 	.attr("transform", `translate(${MARGINS.LEFT}, ${MARGINS.TOP})`)
 
-	const x = d3.scaleLog()
+// Create scales
+const x = d3.scaleLog()
 	.base(10)
 	.domain([142, 150000])
 	.range([0, WIDTH])
@@ -27,7 +25,7 @@ const y = d3.scaleLinear()
 	.range([HEIGHT, 0])
 
 const area = d3.scaleLinear()
-	.range([25*Math.PI, 1500*Math.PI])
+	.range([25 * Math.PI, 1500 * Math.PI])
 	.domain([2000, 1400000000])
 
 const contcolor = d3.scaleOrdinal(d3.schemePastel1)
@@ -61,7 +59,7 @@ const timeLabel = g.append("text")
 	.attr("text-anchor", "middle")
 	.text("1800")
 
-// Add x axes
+// Add x axis
 const xAxisCall = d3.axisBottom(x)
 	.tickValues([400, 4000, 40000])
 	.tickFormat(d => d)
@@ -75,9 +73,9 @@ const yAxisCall = d3.axisLeft(y)
 g.append("g")
 	.attr("class", "y axis")
 	.call(yAxisCall)
-	
 
-d3.json("data/data.json").then(data =>{
+// Read in data and standardize
+d3.json("data/data.json").then(data => {
 	// clean data
 	const formattedData = data.map(year => {
 		return year["countries"].filter(country => {
@@ -89,15 +87,16 @@ d3.json("data/data.json").then(data =>{
 			return country
 		})
 	})
-	
-		d3.interval(() => {
-			time = (time < 214) ? time + 1 : 0
-			update(formattedData[time])
-		}, 100)
 
-		update(formattedData[0])
+	d3.interval(() => {
+		time = (time < 214) ? time + 1 : 0
+		update(formattedData[time])
+	}, 100)
+
+	update(formattedData[0])
 })
 
+// Create update function
 function update(data) {
 	// transition 
 	const t = d3.transition()
@@ -109,17 +108,17 @@ function update(data) {
 
 	// Exit
 	circles.exit().remove()
-	
+
 	// Enter and merge
 	circles.enter().append("circle")
 		.attr("fill", d => contcolor(d.continent))
 		.merge(circles)
 		.transition(t)
-			.attr("cy", d => y(d.life_exp))
-			.attr("cx", d => x(d.income))
-			.attr("r", d => Math.sqrt(area(d.population) / Math.PI))
+		.attr("cy", d => y(d.life_exp))
+		.attr("cx", d => x(d.income))
+		.attr("r", d => Math.sqrt(area(d.population) / Math.PI))
 
-	
+
 	// update time label 
 	timeLabel.text(String(time + 1800))
 
