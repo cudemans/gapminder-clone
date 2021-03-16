@@ -74,6 +74,29 @@ g.append("g")
 	.attr("class", "y axis")
 	.call(yAxisCall)
 
+// Create a legend
+const continents = ['europe', 'asia', 'americas', 'africa']
+
+const legend = g.append("g")
+	.attr("transform", `translate(${WIDTH - 20}, ${HEIGHT - 150})`)
+
+continents.forEach((continent, i) => {
+	const legendRow = legend.append("g")
+		.attr("transform", `translate(0, ${i * 20})`)
+
+	legendRow.append("rect")
+		.attr("height", 10)
+		.attr("width", 10)
+		.attr("fill", contcolor(continent))
+
+	legendRow.append("text")
+		.attr("x", -10)
+		.attr("y", 10)
+		.attr("text-anchor", "end")
+		.style("text-transform", "capitalize")
+		.text(continent)
+})
+
 // Read in data and standardize
 d3.json("data/data.json").then(data => {
 	// clean data
@@ -116,7 +139,7 @@ function update(data) {
 		.transition(t)
 		.attr("cy", d => y(d.life_exp))
 		.attr("cx", d => x(d.income))
-		.attr("r", d => Math.sqrt(area(d.population) / Math.PI))
+		.attr("r", d => Math.sqrt(2 * area(d.population) / Math.PI))
 
 
 	// update time label 
