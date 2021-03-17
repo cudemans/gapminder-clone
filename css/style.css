@@ -16,10 +16,12 @@
 }
 .header {
   text-align: left;
-  font-size: 50px;
-  padding: 15px;
+  font-size: 40px;
+  width: 100%;
+  text-align: left;
+  margin-top: -5px;
   color: rgb(99, 98, 98);
-  transform: translate(13%);
+
   font-weight: 400;
 }
 
