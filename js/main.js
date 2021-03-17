@@ -8,8 +8,10 @@ const svg = d3.select('#chart-area').append("svg")
 	.attr("height", HEIGHT + MARGINS.TOP + MARGINS.BOTTOM)
 	.attr("width", WIDTH + MARGINS.RIGHT + MARGINS.LEFT)
 
-// Add time variable for the transitions
+// Declare global variables
 let time = 0
+let interval
+let formattedData
 
 // Append group element
 const g = svg.append("g")
@@ -119,7 +121,7 @@ continents.forEach((continent, i) => {
 // Read in data and standardize
 d3.json("data/data.json").then(data => {
 	// clean data
-	const formattedData = data.map(year => {
+	formattedData = data.map(year => {
 		return year["countries"].filter(country => {
 			const dataExists = (country.income && country.life_exp)
 			return dataExists
@@ -130,12 +132,49 @@ d3.json("data/data.json").then(data => {
 		})
 	})
 
-	d3.interval(() => {
-		time = (time < 214) ? time + 1 : 0
-		update(formattedData[time])
-	}, 100)
-
 	update(formattedData[0])
+})
+
+// Create step function
+function step() {
+	time = (time < 214) ? time + 1 : 0
+	update(formattedData[time])
+}
+
+// Add play/pause functionality
+$("#play-button")
+	.on("click", function() {
+		const button = $(this)
+		if (button.text() === 'Play') {
+			button.text("Pause")
+			interval = setInterval(step, 100)
+		} else {
+			button.text("Play")
+			clearInterval(interval)
+		}
+	})
+
+// Add reset functionality 
+$("#reset-button")
+	.on("click", function(){
+		time = 0
+		update(formattedData[0])
+	})
+
+// Allow visualization to update selected continents even if it is paused 
+$("#continent-select")
+	.on("change", () =>{
+		update(formattedData[time])
+	})
+
+$("#date-slider").slider({
+	min: 1800,
+	max: 2014,
+	step: 1,
+	slide: (event, ui) => {
+		time = ui.value - 1800
+		update(formattedData[time])
+	}
 })
 
 // Create update function
@@ -143,10 +182,21 @@ function update(data) {
 	// transition 
 	const t = d3.transition()
 		.duration(100)
+		
+	// Update selected continents 
+	const continent = $("#continent-select").val()
+
+	const filteredData = data.filter(d => {
+			if (continent === 'all') return true
+			else {
+				return d.continent == continent
+			
+			}
+		})
 
 	// Join
 	const circles = g.selectAll("circle")
-		.data(data, d => d.country)
+		.data(filteredData, d => d.country)
 
 	// Exit
 	circles.exit().remove()
@@ -165,5 +215,8 @@ function update(data) {
 
 	// update time label 
 	timeLabel.text(String(time + 1800))
+
+	
+	$("#date-slider").slider("value", Number(time + 1800))
 
 }

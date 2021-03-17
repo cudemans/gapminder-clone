@@ -1,24 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
 
 * {
-	font-family: "Roboto";
+  font-family: "Roboto";
 }
 
 #chart-area {
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
-.navbar-brand {
-	height: 60px;
-
+.navbar {
+  height: 60px;
+  margin-bottom: 10px;
 }
 .header {
-	text-align: left;
-	font-size: 50px;
-	padding: 15px;
-	color: rgb(99, 98, 98);
-	transform: translate(13%);
-	font-weight: 400;
+  text-align: left;
+  font-size: 50px;
+  padding: 15px;
+  color: rgb(99, 98, 98);
+  transform: translate(13%);
+  font-weight: 400;
+}
+
+#reset-button,
+#play-button,
+#slider-div {
+  float: left;
+  margin-right: 10px;
+  margin-top: 20px;
+}
+
+#slider-div {
+  width: 300px;
+  margin-left: 15px;
+  margin-top: 16px;
+}
+
+#reset-button,
+#play-button {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+#continent-select {
+  width: 150px;
+  float: right;
+  margin-top: 5px;
+}
+
+.btn {
+  background-color: rgba(105, 105, 105, 0.4);
+  border: none;
+}
+
+.btn:hover {
+  background-color: steelblue;
 }
